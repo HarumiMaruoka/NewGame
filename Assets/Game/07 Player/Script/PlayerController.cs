@@ -1,4 +1,5 @@
 // 日本語対応
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,12 +14,14 @@ namespace Player
 
         // ================ フィールド ================ //
         private CharacterController _characterController = null;
+        private Animator _animator = null;
         private InputManager _inputManager = new InputManager();
         private List<PlayerProperties> _playerProperties = new List<PlayerProperties>();
 
         // =============== プロパティ群 =============== //
         public PlayerMove PlayerMove => _playerMove;
         public CharacterController CharacterController => _characterController;
+        public Animator Animator => _animator;
         public InputManager InputManager => _inputManager;
         public IReadOnlyList<PlayerProperties> PlayerProperties => _playerProperties;
 
@@ -26,6 +29,7 @@ namespace Player
         private void Start()
         {
             _characterController = GetComponent<CharacterController>();
+            _animator = GetComponent<Animator>();
             _inputManager.Init();
             _playerMove.Init(this);
         }
@@ -45,5 +49,13 @@ namespace Player
                 _playerProperties.Add(playerProperties);
             }
         }
+    }
+    [Serializable]
+    public enum AnimType
+    {
+        None,
+        Jump,
+        Midair,
+        Lnad
     }
 }

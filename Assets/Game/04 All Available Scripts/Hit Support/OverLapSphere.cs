@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UniRx;
 
 namespace HitSupport
 {
@@ -12,12 +14,14 @@ namespace HitSupport
         [SerializeField]
         private LayerMask _targetLayer;
 
+        private BoolReactiveProperty _isHit = new BoolReactiveProperty(false);
         private Transform _origin;
 
         public Vector3 Offset => _offset;
         public float Radius => _radius;
         public LayerMask TargetLayer => _targetLayer;
         public Transform Origin => _origin;
+        public IReadOnlyReactiveProperty<bool> IsHitReactiveProperty => _isHit;
 
         private Collider[] _colliders = null;
 
@@ -25,14 +29,6 @@ namespace HitSupport
         {
             _origin = origin;
         }
-        /// <summary>
-        /// このクラスを使用する際は, Update()上部でこのメソッドを呼び出してください。
-        /// </summary>
-        public void Update()
-        {
-            _colliders = null;
-        }
-
         public Collider[] GetCollider()
         {
             if (_colliders != null) return _colliders;
@@ -40,13 +36,19 @@ namespace HitSupport
             else
             {
                 var dir = _origin.rotation * _offset;
+                ResetCollidersNextFrame();
                 return _colliders = Physics.OverlapSphere(_origin.position + dir, _radius, _targetLayer);
             }
+        }
+        private async void ResetCollidersNextFrame()
+        {
+            await UniTask.DelayFrame(1);
+            _colliders = null;
         }
 
         public bool IsHit()
         {
-            return GetCollider().Length > 0;
+            return _isHit.Value = GetCollider().Length > 0;
         }
 
         [SerializeField]

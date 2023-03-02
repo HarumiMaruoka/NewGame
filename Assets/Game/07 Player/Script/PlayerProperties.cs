@@ -7,7 +7,9 @@ namespace Player
     [Serializable]
     public abstract class PlayerProperties
     {
-        protected PlayerController _playerController { get; private set; }
+        [NonSerialized]
+        protected PlayerController _playerController = null;
+
         public void Init(PlayerController playerController)
         {
             _playerController = playerController;

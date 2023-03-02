@@ -1325,10 +1325,10 @@ Animator:
   m_GameObject: {fileID: 5393220897178362553}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 81bb9eea30387e442899949a80011e55, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 636bdfdaa1d1668409351422f7995180, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -1348,20 +1348,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMove:
-    _movementAcceleration: 1
-    _maxMovementSpeed: 4
-    _movementDeceleration: 1
-    _grounded:
-      _offset: {x: 0, y: 0, z: 0}
-      _radius: 0
+    _movementAcceleration: 4
+    _maxMovementSpeed: 6
+    _movementDeceleration: 18
+    _groundedChecker:
+      _offset: {x: 0, y: 0.18, z: 0}
+      _radius: 0.2499
       _targetLayer:
         serializedVersion: 2
-        m_Bits: 0
+        m_Bits: 64
       _isDrawGizmo: 1
-      _gizmoHitColor: {r: 1, g: 0, b: 0, a: 1}
-      _gizmoNotHitColor: {r: 0, g: 0, b: 1, a: 1}
-    _gravitationalAcceleration: -1
+      _gizmoHitColor: {r: 1, g: 0, b: 0, a: 0.5882353}
+      _gizmoNotHitColor: {r: 0, g: 0, b: 1, a: 0.5882353}
+    _gravitationalAcceleration: -20
     _jumpPower: 8
+    _rotationSpeed: 400
+    _currentHorizontalSpeed:
+      value: 0
+    _currentVerticalSpeed: 0
+    _moveAnimationController:
+      _blendValueName: Walk Speed
+    jumpAnimationController:
+      _jumpAnimName: Jump
+      _midairAnimName: Midair
 --- !u!143 &6575245233565429930
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1374,12 +1383,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.25
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.08, z: 0}
 --- !u!1 &5534594804515299880
 GameObject:
   m_ObjectHideFlags: 0

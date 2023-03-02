@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,11 +31,11 @@ namespace Input
         private Dictionary<TEnum, object> _inputValues = new Dictionary<TEnum, object>();
 
         /// <summary> 特定のボタンを押下したときにtrueを返すディクショナリ </summary>
-        public ReadOnlyDictionary<TEnum, bool> IsPressed = null;
+        public IReadOnlyDictionary<TEnum, bool> IsPressed => _isPressed;
         /// <summary> 特定のボタンを押下中, trueを返すディクショナリ </summary>
-        public ReadOnlyDictionary<TEnum, bool> IsExist = null;
+        public IReadOnlyDictionary<TEnum, bool> IsExist => _isExist;
         /// <summary> 特定のボタンを開放したときにtrueを返すディクショナリ </summary>
-        public ReadOnlyDictionary<TEnum, bool> IsReleased = null;
+        public IReadOnlyDictionary<TEnum, bool> IsReleased => _isReleased;
 
         /// <summary> SetAction<>()を呼び出して,各アクションをセットしてください </summary>
         protected abstract void Setup();
@@ -48,9 +47,6 @@ namespace Input
             _inputActionCollection = new TController();
             _inputActionCollection.Enable();
             Setup();
-            IsPressed = new ReadOnlyDictionary<TEnum, bool>(_isPressed);
-            IsExist = new ReadOnlyDictionary<TEnum, bool>(_isExist);
-            IsReleased = new ReadOnlyDictionary<TEnum, bool>(_isReleased);
         }
 
         /// <summary> アクションのセットアップ処理 </summary>
