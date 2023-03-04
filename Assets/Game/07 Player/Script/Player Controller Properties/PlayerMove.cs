@@ -7,7 +7,7 @@ using UniRx;
 namespace Player
 {
     [Serializable]
-    public class PlayerMove : PlayerProperties
+    public class PlayerMove : PlayerProperties, IPausable
     {
         [Header("水平方向の移動に使用する値")]
         [Tooltip("移動加速度"), SerializeField]
@@ -45,8 +45,14 @@ namespace Player
         private Vector3 _currentDirection = Vector3.zero;
         private Quaternion _targetRotation = default;
 
+        /// <summary> 移動できるかどうかを表す値 </summary>
         public bool CanMove { get; set; } = true;
+        /// <summary> ジャンプできるかどうかを表す値 </summary>
         public bool CanJump { get; set; } = true;
+        /// <summary> 水平方向の移動の計算をするかどうか </summary>
+        public bool IsHorizontalCalculate { get; private set; } = true;
+        /// <summary> 垂直方向の移動の計算をするかどうか </summary>
+        public bool IsVerticalCalculate { get; private set; } = true;
         public IReadOnlyReactiveProperty<float> CurrentHorizontalSpeed => _currentHorizontalSpeed;
         public float MaxMovementSpeed => _maxMovementSpeed;
         public OverLapSphere GroundedChecker => _groundedChecker;
@@ -57,6 +63,7 @@ namespace Player
             _groundedChecker.Init(_playerController.transform);
             _moveAnimationController.Init(_playerController.Animator, this);
             jumpAnimationController.Init(_playerController.Animator, this);
+            GameManager.Instance.PauseManager.Register(this);
         }
         public override void Update()
         {
@@ -65,67 +72,91 @@ namespace Player
             _playerController.CharacterController.
                 Move(velocity * Time.deltaTime);
         }
+        ~PlayerMove()
+        {
+            GameManager.Instance.PauseManager.Lift(this);
+        }
         public void OnDrawGizmo(Transform origin)
         {
             _groundedChecker.OnDrawGizmos(origin);
         }
         private Vector3 HorizontalCalculation()
         {
-            // 入力がある場合の処理
-            if (_playerController.InputManager.IsExist[InputType.Move] && CanMove)
+            if (IsHorizontalCalculate)
             {
-                // 入力の方向を保存しておく
-                Vector3 value = _playerController.InputManager.GetValue<Vector2>(InputType.Move);
-                _currentDirection = new Vector3(value.x, 0f, value.y).normalized;
-
-                // カメラに合わせて 移動方向とプレイヤーの向きを調整する
-                _currentDirection = Camera.main.transform.TransformDirection(_currentDirection);
-                _targetRotation = Quaternion.LookRotation(_currentDirection, Vector3.up);
-                _currentDirection.y = 0f;
-                _currentDirection = _currentDirection.normalized;
-                // 回転の補正
-                _targetRotation.x = 0f;
-                _targetRotation.z = 0f;
-                _playerController.transform.rotation = Quaternion.RotateTowards(_playerController.transform.rotation, _targetRotation, _rotationSpeed * Time.deltaTime);
-
-                // 速度を加算する
-                _currentHorizontalSpeed.Value += Time.deltaTime * _movementAcceleration;
-                if (_maxMovementSpeed < _currentHorizontalSpeed.Value)
+                // 入力がある場合の処理
+                if (_playerController.InputManager.IsExist[InputType.Move] && CanMove)
                 {
-                    _currentHorizontalSpeed.Value = _maxMovementSpeed;
-                } // 最大値を超えないように調整する
-            }
-            // 入力がない場合の処理
-            else
-            {
-                // 速度を減算する
-                _currentHorizontalSpeed.Value -= Time.deltaTime * _movementDeceleration;
-                if (0f > _currentHorizontalSpeed.Value)
+                    // 入力の方向を保存しておく
+                    Vector3 value = _playerController.InputManager.GetValue<Vector2>(InputType.Move);
+                    _currentDirection = new Vector3(value.x, 0f, value.y).normalized;
+
+                    // カメラに合わせて 移動方向とプレイヤーの向きを調整する
+                    _currentDirection = Camera.main.transform.TransformDirection(_currentDirection);
+                    _targetRotation = Quaternion.LookRotation(_currentDirection, Vector3.up);
+                    _currentDirection.y = 0f;
+                    _currentDirection = _currentDirection.normalized;
+                    // 回転の補正
+                    _targetRotation.x = 0f;
+                    _targetRotation.z = 0f;
+                    _playerController.transform.rotation = Quaternion.RotateTowards(_playerController.transform.rotation, _targetRotation, _rotationSpeed * Time.deltaTime);
+
+                    // 速度を加算する
+                    _currentHorizontalSpeed.Value += Time.deltaTime * _movementAcceleration;
+                    if (_maxMovementSpeed < _currentHorizontalSpeed.Value)
+                    {
+                        _currentHorizontalSpeed.Value = _maxMovementSpeed;
+                    } // 最大値を超えないように調整する
+                }
+                // 入力がない場合の処理
+                else
                 {
-                    _currentHorizontalSpeed.Value = 0f;
-                } // 最小値を下回らないように調整する
+                    // 速度を減算する
+                    _currentHorizontalSpeed.Value -= Time.deltaTime * _movementDeceleration;
+                    if (0f > _currentHorizontalSpeed.Value)
+                    {
+                        _currentHorizontalSpeed.Value = 0f;
+                    } // 最小値を下回らないように調整する
+                }
+                return _currentDirection * _currentHorizontalSpeed.Value;
             }
-            return _currentDirection * _currentHorizontalSpeed.Value;
+            return Vector3.zero;
         }
         private float VerticalCalculation()
         {
-            // 接地していて、ジャンプ入力があるときの処理
-            if (_groundedChecker.IsHit() && _playerController.InputManager.IsPressed[InputType.Jump] && CanJump)
+            if (IsVerticalCalculate)
             {
-                OnJump?.Invoke();
-                _currentVerticalSpeed = _jumpPower;
+                // 接地していて、ジャンプ入力があるときの処理
+                if (_groundedChecker.IsHit() && _playerController.InputManager.IsPressed[InputType.Jump] && CanJump)
+                {
+                    OnJump?.Invoke();
+                    _currentVerticalSpeed = _jumpPower;
+                }
+                // 接地していて、垂直移動速度がマイナス（落下している）ときの処理
+                else if (_groundedChecker.IsHit() && _currentVerticalSpeed < 0f)
+                {
+                    _currentVerticalSpeed = Time.deltaTime * _gravitationalAcceleration;
+                }
+                // 接地していないときの処理
+                else
+                {
+                    _currentVerticalSpeed += Time.deltaTime * _gravitationalAcceleration;
+                }
+                return _currentVerticalSpeed;
             }
-            // 接地していて、垂直移動速度がマイナス（落下している）ときの処理
-            else if (_groundedChecker.IsHit() && _currentVerticalSpeed < 0f)
-            {
-                _currentVerticalSpeed = Time.deltaTime * _gravitationalAcceleration;
-            }
-            // 接地していないときの処理
-            else
-            {
-                _currentVerticalSpeed += Time.deltaTime * _gravitationalAcceleration;
-            }
-            return _currentVerticalSpeed;
+            return 0f;
+        }
+
+        public void Pause()
+        {
+            IsHorizontalCalculate = false;
+            IsVerticalCalculate = false;
+        }
+
+        public void Resume()
+        {
+            IsHorizontalCalculate = true;
+            IsVerticalCalculate = true;
         }
     }
 }
