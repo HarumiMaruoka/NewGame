@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HitSupport
 {
-    [System.Serializable]
+    [Serializable]
     public class Raycast
     {
         [SerializeField]

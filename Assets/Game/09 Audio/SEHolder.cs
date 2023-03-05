@@ -8,8 +8,8 @@ public class SEHolder : MonoBehaviour
     [SerializeField]
     private SETypeClipPair[] _audioTypeClipPairs = default;
 
-    private Dictionary<SEType, AudioClip> _seSummary = new Dictionary<SEType, AudioClip>();
-    public IReadOnlyDictionary<SEType, AudioClip> SeSummary => _seSummary;
+    private Dictionary<SEType, AudioClip> _seList = new Dictionary<SEType, AudioClip>();
+    public IReadOnlyDictionary<SEType, AudioClip> SEList => _seList;
 
     private void Awake()
     {
@@ -18,7 +18,7 @@ public class SEHolder : MonoBehaviour
         {
             for (; i < _audioTypeClipPairs.Length; i++)
             {
-                _seSummary.Add(_audioTypeClipPairs[i].AudioType, _audioTypeClipPairs[i].AudioClip);
+                _seList.Add(_audioTypeClipPairs[i].AudioType, _audioTypeClipPairs[i].AudioClip);
             }
         }
         catch (ArgumentException)
@@ -26,6 +26,7 @@ public class SEHolder : MonoBehaviour
             Debug.LogWarning($"SETypeが重複しています！修正ください！\n" +
                 $"重複しているキー{_audioTypeClipPairs[i].AudioType}");
         }
+        _audioTypeClipPairs = null; // 領域を破棄する。（ガベージコレクタを走らせたくない...）
     }
 }
 [Serializable]

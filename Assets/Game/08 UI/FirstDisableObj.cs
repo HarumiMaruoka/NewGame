@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class FirstDisableUI : MonoBehaviour
+public class FirstDisableObj : MonoBehaviour
 {
     private void Start()
     {
