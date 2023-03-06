@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SEHolder : MonoBehaviour
+public class BGMHolder : MonoBehaviour
 {
     [SerializeField]
-    private SETypeClipPair[] _audioTypeClipPairs = default;
+    private BGMTypeClipPair[] _audioTypeClipPairs = default;
 
-    private Dictionary<SEType, AudioClip> _seList = new Dictionary<SEType, AudioClip>();
-    public IReadOnlyDictionary<SEType, AudioClip> SEList => _seList;
+    private Dictionary<BGMType, AudioClip> _bgmList = new Dictionary<BGMType, AudioClip>();
+    public IReadOnlyDictionary<BGMType, AudioClip> BGMList => _bgmList;
 
     private void Awake()
     {
@@ -18,30 +18,31 @@ public class SEHolder : MonoBehaviour
         {
             for (; i < _audioTypeClipPairs.Length; i++)
             {
-                _seList.Add(_audioTypeClipPairs[i].AudioType, _audioTypeClipPairs[i].AudioClip);
+                _bgmList.Add(_audioTypeClipPairs[i].AudioType, _audioTypeClipPairs[i].AudioClip);
             }
         }
         catch (ArgumentException)
         {
-            Debug.LogWarning($"SETypeが重複しています！修正ください！\n" +
+            Debug.LogWarning($"BGMTypeが重複しています！修正ください！\n" +
                 $"重複しているキー{_audioTypeClipPairs[i].AudioType}");
         }
         _audioTypeClipPairs = null;
     }
 }
+
 [Serializable]
-public class SETypeClipPair
+public class BGMTypeClipPair
 {
     [SerializeField]
-    private SEType _audioType = default;
+    private BGMType _audioType = default;
     [SerializeField]
     private AudioClip _audioClip = default;
 
-    public SEType AudioType => _audioType;
+    public BGMType AudioType => _audioType;
     public AudioClip AudioClip => _audioClip;
 }
 [Serializable]
-public enum SEType
+public enum BGMType
 {
 
 }
