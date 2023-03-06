@@ -8,7 +8,7 @@ public class 草が生えねえ : MonoBehaviour
     private void Start()
     {
         
-    }// 
+    }// //
 
     private void Update()
     {
