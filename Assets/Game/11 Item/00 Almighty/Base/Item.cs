@@ -1,17 +1,26 @@
 // 日本語対応
 using System;
+using UnityEngine.UI;
 
 [Serializable]
 public abstract class Item
 {
-    private int _id = -1;
+    private readonly int _id = -1;
+    private readonly string _name = "未設定";
+    private readonly Image _icon = null;
+    private readonly string _explanatoryText = "未設定";
 
     public abstract ItemType Type { get; }
 
     public int ID => _id;
+    public string Name => _name;
+    public Image Icon => _icon;
+    public string ExplanatoryText => _explanatoryText;
 
-    public Item(int id)
+    public Item(int id, string name, Image icon, string explanatoryText)
     {
-        _id = id;
+        _id = id; _name = name; _icon = icon; _explanatoryText = explanatoryText;
     }
+
+    public abstract void OnButtonClick();
 }
