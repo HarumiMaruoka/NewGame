@@ -16,7 +16,11 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 9139336c08f71304b87c36cc3c4629ed
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 32acbab31943bc041bbfdbfd9806deb9
+    m_Address: Meal Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: c28173fd8bdc5b441a3af3f35fe8df23, type: 2}
   m_SchemaSet:

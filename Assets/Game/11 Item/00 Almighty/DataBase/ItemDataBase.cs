@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
+
 
 /// <summary>
 /// 各アイテムの情報を集積するところ
@@ -42,7 +42,7 @@ public class ItemDataBase
     public Valuables[] Valuables => _valuables;
 
     /// <summary> 料理の最大ID </summary>
-    public const int MaxID_Meal = 0;
+    public const int MaxID_Meal = 20;
     /// <summary> 武器の最大ID </summary>
     public const int MaxID_Weapon = 0;
     /// <summary> 防具の最大ID </summary>
@@ -55,7 +55,7 @@ public class ItemDataBase
     public const int MaxID_Valuables = 0;
 
     /// <summary> 料理データの格納しているcsvファイルのアドレッサブル名 </summary>
-    private readonly string _mealCsvAddressableName = "";
+    private readonly string _mealCsvAddressableName = "Meal Data";
     /// <summary> 武器データの格納しているcsvファイルのアドレッサブル名 </summary>
     private readonly string _weaponCsvAddressableName = "";
     /// <summary> 防具データの格納しているcsvファイルのアドレッサブル名 </summary>
@@ -67,28 +67,31 @@ public class ItemDataBase
     /// <summary> 貴重品データの格納しているcsvファイルのアドレッサブル名 </summary>
     private readonly string _valuablesCsvAddressableName = "";
 
-    public async UniTask<bool> LoadItem()
+    public bool IsLoaded { get; private set; } = false;
+
+    /// <summary> アイテムデータを読み込む </summary>
+    public async UniTask<bool> LoadItemData()
     {
         try
         {
             // 料理データを取得,設定する
             var loadData = await GetCsv(_mealCsvAddressableName);
-            SetItem(_meals, loadData, ItemConverter.StringToItemMeal);
-            // 武器データを取得,設定する
-            loadData = await GetCsv(_weaponCsvAddressableName);
-            SetItem(_weapons, loadData, ItemConverter.StringToItemWeapon);
-            // 防具データを取得,設定する
-            loadData = await GetCsv(_armorCsvAddressableName);
-            SetItem(_armors, loadData, ItemConverter.StringToItemArmor);
-            // 料理道具データを取得,設定する
-            loadData = await GetCsv(_kitchenwareCsvAddressableName);
-            SetItem(_kitchenwares, loadData, ItemConverter.StringToItemKitchenware);
-            // 料理素材データを取得,設定する
-            loadData = await GetCsv(_cookingIngredientsCsvAddressableName);
-            SetItem(_cookingIngredients, loadData, ItemConverter.StringToItemCookingIngredients);
-            // 貴重品データを取得,設定する
-            loadData = await GetCsv(_valuablesCsvAddressableName);
-            SetItem(_valuables, loadData, ItemConverter.StringToItemValuables);
+            SetItem(_meals, loadData, ItemConverter.StringToMeal);
+            //// 武器データを取得,設定する
+            //loadData = await GetCsv(_weaponCsvAddressableName);
+            //SetItem(_weapons, loadData, ItemConverter.StringToWeapon);
+            //// 防具データを取得,設定する
+            //loadData = await GetCsv(_armorCsvAddressableName);
+            //SetItem(_armors, loadData, ItemConverter.StringToArmor);
+            //// 料理道具データを取得,設定する
+            //loadData = await GetCsv(_kitchenwareCsvAddressableName);
+            //SetItem(_kitchenwares, loadData, ItemConverter.StringToKitchenware);
+            //// 料理素材データを取得,設定する
+            //loadData = await GetCsv(_cookingIngredientsCsvAddressableName);
+            //SetItem(_cookingIngredients, loadData, ItemConverter.StringToCookingIngredients);
+            //// 貴重品データを取得,設定する
+            //loadData = await GetCsv(_valuablesCsvAddressableName);
+            //SetItem(_valuables, loadData, ItemConverter.StringToValuables);
         }
         catch (Exception e)
         {
@@ -96,7 +99,21 @@ public class ItemDataBase
             Debug.LogError("アイテムの読み込みに失敗しました。");
             return false;
         }
+        IsLoaded = true;
         return true;
+    }
+    /// <summary> 所持数データを取得する </summary>
+    public void LoadPossessionData()
+    {
+        // ファイルがある場合
+        // if ()
+        // {
+        // 
+        // }
+        // else
+        // {
+        // 
+        // }
 
     }
     /// <summary> アイテムを割り当てる </summary>
@@ -105,6 +122,7 @@ public class ItemDataBase
     /// <param name="converter"> 文字をアイテムオブジェクトに変換する関数 </param>
     private void SetItem(Item[] storageSite, StringReader sauce, Func<string[], Item> converter)
     {
+        sauce.ReadLine(); // 一行目はヘッダー行なので切り捨てる。
         for (int i = 0; i < storageSite.Length; i++)
         {
             // 格納場所    = 変換器   (入力を一行読み取り、カンマ区切りに加工した文字列を変換器に渡す。)

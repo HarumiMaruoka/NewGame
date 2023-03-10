@@ -5,8 +5,8 @@ using UnityEngine.UI;
 [Serializable]
 public class Armor : Item
 {
-    public Armor(int id, string name, Image icon, string explanatoryText) :
-        base(id, name, icon, explanatoryText)
+    public Armor(int id, string name, string explanatoryText) :
+        base(id, name, explanatoryText)
     {
 
     }

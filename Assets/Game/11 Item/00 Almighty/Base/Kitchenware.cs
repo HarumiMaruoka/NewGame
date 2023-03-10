@@ -5,8 +5,8 @@ using UnityEngine.UI;
 [Serializable]
 public class Kitchenware : Item
 {
-	public Kitchenware(int id, string name, Image icon, string explanatoryText) :
-        base(id, name, icon, explanatoryText)
+    public Kitchenware(int id, string name, string explanatoryText) :
+        base(id, name, explanatoryText)
     {
 
     }

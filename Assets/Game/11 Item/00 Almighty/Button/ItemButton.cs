@@ -1,5 +1,6 @@
 // 日本語対応
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemButton : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class ItemButton : MonoBehaviour
     public int ID => _id;
     public ItemType ItemType => _itemType;
 
-    public void SetValue(int id, ItemType itemType)
+    public void Setup(int id, ItemType itemType)
     {
         _id = id;
         _itemType = itemType;
