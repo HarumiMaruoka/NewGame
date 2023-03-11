@@ -7,9 +7,9 @@ using UnityEngine.Events;
 /// </summary>
 public class PauseAndResumeButton : MonoBehaviour
 {
-    [Tooltip("ポーズ処理（インスペクタで割り当てる用）"), SerializeField]
+    [Tooltip("ポーズ処理（インスペクタから割り当てる用）"), SerializeField]
     private UnityEvent _onPause = default;
-    [Tooltip("リジューム処理（インスペクタで割り当てる用）"), SerializeField]
+    [Tooltip("リジューム処理（インスペクタから割り当てる用）"), SerializeField]
     private UnityEvent _onResume = default;
 
     /// <summary>

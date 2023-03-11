@@ -9,7 +9,7 @@ using UnityEngine.AddressableAssets;
 /// <summary>
 /// 各アイテムの情報を集積するところ
 /// </summary>
-public class ItemDataBase
+public class ItemDataBase : ISavable
 {
     #region Singleton
     private static ItemDataBase _instance = new ItemDataBase();
@@ -27,6 +27,8 @@ public class ItemDataBase
     private ItemDataBase() { }
     #endregion
 
+    private PlayerInventoryData _playerInventoryData = null;
+
     private Meal[] _meals = new Meal[MaxID_Meal];
     private Weapon[] _weapons = new Weapon[MaxID_Weapon];
     private Armor[] _armors = new Armor[MaxID_Armor];
@@ -34,12 +36,15 @@ public class ItemDataBase
     private CookingIngredients[] _cookingIngredients = new CookingIngredients[MaxID_CookingIngredients];
     private Valuables[] _valuables = new Valuables[MaxID_Valuables];
 
+    public PlayerInventoryData PlayerPossessionData => _playerInventoryData;
+
     public Meal[] Meals => _meals;
     public Weapon[] Weapons => _weapons;
     public Armor[] Armors => _armors;
     public Kitchenware[] Kitchenwares => _kitchenwares;
     public CookingIngredients[] CookingIngredients => _cookingIngredients;
     public Valuables[] Valuables => _valuables;
+
 
     /// <summary> 料理の最大ID </summary>
     public const int MaxID_Meal = 20;
@@ -102,19 +107,19 @@ public class ItemDataBase
         IsLoaded = true;
         return true;
     }
-    /// <summary> 所持数データを取得する </summary>
-    public void LoadPossessionData()
-    {
-        // ファイルがある場合
-        // if ()
-        // {
-        // 
-        // }
-        // else
-        // {
-        // 
-        // }
 
+    public void Save()
+    {
+        SaveManager.Save<PlayerInventoryData>(_playerInventoryData, "Inventory data", 0);
+    }
+    public void Load()
+    {
+        _playerInventoryData = SaveManager.Load<PlayerInventoryData>("Inventory data", 0);
+        if (_playerInventoryData == null)
+        {
+            _playerInventoryData = new PlayerInventoryData();
+            _playerInventoryData.Init();
+        }
     }
     /// <summary> アイテムを割り当てる </summary>
     /// <param name="storageSite"> アイテムの格納場所 </param>
@@ -135,4 +140,5 @@ public class ItemDataBase
         var asset = await Addressables.LoadAssetAsync<TextAsset>(addressableName);
         return new StringReader(asset.text);
     }
+
 }

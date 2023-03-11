@@ -1,28 +1,29 @@
 // 日本語対応
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class ItemButtonController : MonoBehaviour
 {
-    public event Action OnDataLoaded = null;
-    public event Action<GameObject, GameObject> OnChangedSelectedButton = null;
-
-    [SerializeField]
-    private GameObject _itemButton = default;
-    [SerializeField]
-    private Transform _mealButtonParent = default;
-    [SerializeField]
+    [Tooltip("アイテムデータを読み込んだ直後に発行されるイベント"), SerializeField]
+    private UnityEvent _onDataLoaded = default;
+    [Tooltip("イベントシステム"), SerializeField]
     private EventSystem _eventSystem = default;
-
+    /// <summary> 前フレームで選択されていたオブジェクト </summary>
     private GameObject _previousSelectedObject = null;
+
+    /// <summary> アイテムデータを読み込んだ直後に発行されるイベント </summary>
+    public event Action OnDataLoaded = null;
+    /// <summary> 選択中のオブジェクトが変更された時に発行されるイベント </summary>
+    public event Action<GameObject, GameObject> OnChangedSelectedButton = null;
 
     private async void Awake()
     {
         if (!ItemDataBase.Instance.IsLoaded)
         {
             await ItemDataBase.Instance.LoadItemData();
-            GenerateButton();
+            _onDataLoaded.Invoke();
             OnDataLoaded?.Invoke();
         }
     }
@@ -33,20 +34,5 @@ public class ItemButtonController : MonoBehaviour
             OnChangedSelectedButton?.Invoke(_previousSelectedObject, _eventSystem.currentSelectedGameObject);
         }
         _previousSelectedObject = _eventSystem.currentSelectedGameObject;
-    }
-    private void GenerateButton()
-    {
-        SetupMealButton(_mealButtonParent);
-    }
-    private void SetupMealButton(Transform parent)
-    {
-        for (int i = 0; i < ItemDataBase.MaxID_Meal; i++)
-        {
-            var button = Instantiate(_itemButton, parent);
-            button.AddComponent<ItemButton>().Setup(i, ItemType.Meal);
-            var mealButton = button.AddComponent<MealButton>();
-            mealButton.Setup();
-            mealButton.NameText.text = ItemDataBase.Instance.Meals[i].Name;
-        }
     }
 }

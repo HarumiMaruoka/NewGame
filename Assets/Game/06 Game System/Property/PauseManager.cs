@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UniRx;
 
 /// <summary>
 /// ポーズ, リジュームを管理するクラス

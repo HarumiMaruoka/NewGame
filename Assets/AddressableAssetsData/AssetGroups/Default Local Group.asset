@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Meal Data
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 7de57ff223d754c4ca070bf7cd2847f9
+    m_Address: Actor Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: c28173fd8bdc5b441a3af3f35fe8df23, type: 2}
   m_SchemaSet:

@@ -1,6 +1,6 @@
 // 日本語対応
 using System;
-using UnityEngine.UI;
+using UnityEngine;
 
 [Serializable]
 public class Meal : Item
@@ -13,9 +13,23 @@ public class Meal : Item
     }
     public override ItemType Type => ItemType.Meal;
 
+    /// <summary>
+    /// ボタンクリック時の処理
+    /// </summary>
     public override void OnButtonClick()
     {
-        throw new NotImplementedException();
+        //Debug.Log("<color=red>料理ボタンをクリックしました</color>\n" +
+        //    $"この料理の回復量 : {_recoveryAmount}, この料理の特殊効果 : {_mealSpecialEffects}");
+    }
+    /// <summary> ILifeを持つオブジェクトの体力値を変更する </summary>
+    /// <param name="life">  </param>
+    public void Heal(ILife life)
+    {
+        life.Life += _recoveryAmount;
+    }
+    public void SpecialEffects()
+    {
+
     }
 
     private readonly float _recoveryAmount = 0f;

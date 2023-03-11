@@ -23,9 +23,18 @@ public class GameManager
     #endregion
 
     private PauseManager _pauseManager = new PauseManager();
-
+    private SaveManager _saveManager = new SaveManager();
+    private ActorDataBase _actorDataBase = new ActorDataBase();
     /// <summary>
-    /// ポーズ状態を表現するクラス
+    /// ポーズ状態を管理するクラス
     /// </summary>
     public PauseManager PauseManager => _pauseManager;
+    /// <summary>
+    /// セーブロードを管理するクラス
+    /// </summary>
+    public SaveManager SaveManager => _saveManager;
+    /// <summary>
+    /// アクターの情報を保持、管理するクラス
+    /// </summary>
+    public ActorDataBase ActorDataBase => _actorDataBase;
 }

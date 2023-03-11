@@ -2,20 +2,18 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// プレイヤーが所持している物のデータ
-/// </summary>
+/// <summary> プレイヤーが所持している物のデータ </summary>
 [Serializable]
-public class PlayerPossessionData
+public class PlayerInventoryData
 {
     /// <summary> いくつ武器を所持できるか を表す値 </summary>
-    public const int MaxWeaponPossessionNumber = 20;
+    public const int MaxWeaponInventoryNumber = 20;
     /// <summary> いくつ防具を所持できるか を表す値 </summary>
-    public const int MaxArmorPossessionNumber = 20;
+    public const int MaxArmorInventoryNumber = 20;
 
     private int[] _mealData = new int[ItemDataBase.MaxID_Meal];
-    private int[] _weaponData = new int[MaxWeaponPossessionNumber];
-    private int[] _armorData = new int[MaxArmorPossessionNumber];
+    private int[] _weaponData = new int[MaxWeaponInventoryNumber];
+    private int[] _armorData = new int[MaxArmorInventoryNumber];
     private bool[] _kitchenwareData = new bool[ItemDataBase.MaxID_Kitchenware];
     private int[] _cookingIngredientsData = new int[ItemDataBase.MaxID_CookingIngredients];
     private bool[] _valuablesData = new bool[ItemDataBase.MaxID_Valuables];
@@ -33,10 +31,24 @@ public class PlayerPossessionData
     /// <summary> 貴重品の所持状況。添字に貴重品のIDを指定することで、その貴重品を所持しているかどうか を表す値を取得できる。 </summary>
     public bool[] ValuablesData => _valuablesData;
 
+    /// <summary> このクラスの初期化処理 </summary>
+    public void Init()
+    {
+        // 武器と防具の領域を-1で初期化する。
+        // それ以外の領域はデフォルト値で問題ない。
+        for (int i = 0; i < _weaponData.Length; i++)
+        {
+            _weaponData[i] = -1;
+        }
+        for (int i = 0; i < _armorData.Length; i++)
+        {
+            _armorData[i] = -1;
+        }
+    }
     /// <summary> 指定された料理の所持数を変更する </summary>
     /// <param name="id"> 料理のID </param>
     /// <param name="value"> 変更する量 </param>
-    public void ChangeMealPossessionData(int id, int value)
+    public void ChangeMealInventoryData(int id, int value)
     {
         _mealData[id] += value;
     }
@@ -46,7 +58,7 @@ public class PlayerPossessionData
     /// </summary>
     /// <param name="index"> 武器の格納場所を表すインデックス </param>
     /// <returns> そのインデックスに格納されている武器のID </returns>
-    public int PullWeaponPossessionData(int index)
+    public int PullWeaponInventoryData(int index)
     {
         Debug.LogWarning("未実装");
         return -1; // 未実装のため、ダミーを返す。
@@ -55,7 +67,7 @@ public class PlayerPossessionData
     /// <param name="index"> 武器の格納場所を表すインデックス。 </param>
     /// <param name="id"> 格納する武器のID。 </param>
     /// <returns> 指定されたインデックスに既に武器が格納されていた場合。falseを返す。 </returns>
-    public bool PushWeaponPossessionData(int index, int id)
+    public bool PushWeaponInventoryData(int index, int id)
     {
         Debug.LogWarning("未実装");
         return true; // 未実装のため、ダミーを返す。
@@ -66,7 +78,7 @@ public class PlayerPossessionData
     /// </summary>
     /// <param name="index"> 防具の格納場所を表すインデックス。 </param>
     /// <returns>　そのインデックスに格納されている防具のID。　</returns>
-    public int PullArmorPossessionData(int index)
+    public int PullArmorInventoryData(int index)
     {
         Debug.LogWarning("未実装");
         return -1; // 未実装のため、ダミーを返す。
@@ -75,7 +87,7 @@ public class PlayerPossessionData
     /// <param name="index"> 防具の格納場所を表すインデックス </param>
     /// <param name="id"> 格納する防具のID </param>
     /// <returns> 指定されたインデックスに既に防具が格納されていた場合。falseを返す。 </returns>
-    public bool PushArmorPossessionData(int index, int id)
+    public bool PushArmorInventoryData(int index, int id)
     {
         Debug.LogWarning("未実装");
         return true; // 未実装のため、ダミーを返す。
@@ -113,7 +125,7 @@ public class PlayerPossessionData
     /// <summary> 指定された料理素材の所持数を変更する </summary>
     /// <param name="id"> 料理素材のID </param>
     /// <param name="value"> 変更する量 </param>
-    public void ChangeCookingIngredientsPossessionData(int id, int value)
+    public void ChangeCookingIngredientsInventoryData(int id, int value)
     {
         _cookingIngredientsData[id] += value;
     }
